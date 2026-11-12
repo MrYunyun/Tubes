@@ -55,6 +55,11 @@
 </head>
 <body class="h-[100dvh] bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-sans transition-colors duration-200 overflow-hidden">
 
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast-notification" class="fixed top-4 left-1/2 -translate-x-1/2 z-[60] hidden px-4 py-2.5 rounded-2xl shadow-lg text-xs font-semibold text-white bg-emerald-600 transition-all duration-300 flex items-center space-x-2 max-w-[90vw]">
+        <span id="toast-message"></span>
+    </div>
+
     <!-- AUTHENTICATION SCREEN (LOGIN / REGISTER) -->
     <div id="auth-screen" class="fixed inset-0 z-50 bg-slate-900/90 backdrop-blur-md flex items-center justify-center p-4">
         <div class="bg-white dark:bg-slate-800 w-full max-w-md p-8 rounded-3xl shadow-2xl border border-slate-100 dark:border-slate-700 space-y-6">
@@ -316,21 +321,9 @@
 
                 <!-- VIEW 2: TRANSAKSI -->
                 <section id="view-transactions" class="tab-content space-y-4 hidden">
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                        <div>
-                            <h2 class="text-lg font-bold text-slate-900 dark:text-white">Riwayat Transaksi</h2>
-                            <p class="text-[11px] text-slate-500 dark:text-slate-400">Kelola dan tinjau seluruh catatan keuangan Anda</p>
-                        </div>
-                        <div class="flex items-center space-x-2">
-                            <button onclick="exportCSV()" class="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-200 flex items-center space-x-1.5">
-                                <i data-lucide="download" class="w-3.5 h-3.5"></i>
-                                <span>Ekspor CSV</span>
-                            </button>
-                            <button onclick="openModal('transactionModal')" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold flex items-center space-x-1.5 shadow-sm">
-                                <i data-lucide="plus" class="w-3.5 h-3.5"></i>
-                                <span class="hidden sm:inline">Tambah Transaksi</span>
-                            </button>
-                        </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900 dark:text-white">Riwayat Transaksi</h2>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400">Kelola dan tinjau seluruh catatan keuangan Anda</p>
                     </div>
 
                     <div class="bg-white dark:bg-slate-800 p-3.5 rounded-2xl border border-slate-100 dark:border-slate-700/60 shadow-sm space-y-3">
@@ -360,14 +353,16 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-100 dark:border-slate-700/50">
-                            <div class="flex items-center space-x-1.5 text-xs">
-                                <span class="text-slate-400 text-[11px]">Periode:</span>
-                                <input type="date" id="filter-start-date" onchange="renderTransactionsTable()" class="px-2 py-1 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs outline-none">
-                                <span class="text-slate-400 text-[11px]">s/d</span>
-                                <input type="date" id="filter-end-date" onchange="renderTransactionsTable()" class="px-2 py-1 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs outline-none">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pt-2 border-t border-slate-100 dark:border-slate-700/50">
+                            <div class="flex flex-col sm:flex-row sm:items-center gap-1.5 w-full sm:w-auto">
+                                <span class="text-slate-400 text-[11px] shrink-0">Periode:</span>
+                                <div class="grid grid-cols-[1fr_auto_1fr] items-center gap-1.5 w-full sm:w-auto">
+                                    <input type="date" id="filter-start-date" onchange="renderTransactionsTable()" class="w-full min-w-0 px-2 py-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-[11px] sm:text-xs outline-none">
+                                    <span class="text-slate-400 text-[11px] text-center">s/d</span>
+                                    <input type="date" id="filter-end-date" onchange="renderTransactionsTable()" class="w-full min-w-0 px-2 py-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-[11px] sm:text-xs outline-none">
+                                </div>
                             </div>
-                            <button onclick="resetFilters()" class="px-2.5 py-1 text-xs text-rose-600 hover:text-rose-700 dark:text-rose-400 font-medium flex items-center space-x-1">
+                            <button onclick="resetFilters()" class="self-start sm:self-auto px-2.5 py-1 text-xs text-rose-600 hover:text-rose-700 dark:text-rose-400 font-medium flex items-center space-x-1">
                                 <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
                                 <span>Reset Filter</span>
                             </button>
@@ -391,6 +386,14 @@
                                 </tbody>
                             </table>
                         </div>
+                    </div>
+
+                    <!-- Ekspor CSV di Bagian Bawah -->
+                    <div class="flex justify-end">
+                        <button onclick="exportCSV()" class="w-full sm:w-auto justify-center px-4 py-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-200 flex items-center space-x-1.5 shadow-sm transition-colors">
+                            <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                            <span>Ekspor CSV</span>
+                        </button>
                     </div>
                 </section>
 
@@ -521,7 +524,7 @@
                                 <i data-lucide="database" class="w-5 h-5"></i>
                                 <h3 class="font-bold text-slate-900 dark:text-white text-sm">Cadangan Data (JSON)</h3>
                             </div>
-                            <p class="text-[11px] text-slate-500">Unduh seluruh catatan transaksi dan target Anda sebagai berkas JSON.</p>
+                            <p class="text-[11px] text-slate-500">Unduh seluruh catatan transaksi dan target Anda sebagai berkas JSON, atau pulihkan dari berkas cadangan (.json / .csv).</p>
                             <div class="flex flex-wrap gap-2">
                                 <button onclick="exportJSONBackup()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-xs font-semibold rounded-xl flex items-center space-x-1.5">
                                     <i data-lucide="download" class="w-3.5 h-3.5"></i>
@@ -529,8 +532,8 @@
                                 </button>
                                 <label class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-xl flex items-center space-x-1.5 cursor-pointer">
                                     <i data-lucide="upload" class="w-3.5 h-3.5"></i>
-                                    <span>Import JSON</span>
-                                    <input type="file" id="import-json-file" accept=".json" onchange="importJSONBackup(event)" class="hidden">
+                                    <span>Import Data</span>
+                                    <input type="file" id="import-json-file" accept=".json,.csv,application/json,text/csv,text/plain,*/*" onchange="importJSONBackup(event)" class="hidden">
                                 </label>
                             </div>
                         </div>
@@ -1442,16 +1445,158 @@
 
         function changeCalendarMonth(delta) { appState.calendarDate.setMonth(appState.calendarDate.getMonth() + delta); renderCalendar(); }
 
-        // BACKUP
-        function exportJSONBackup() {
-            const a = document.createElement('a'); a.href = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState, null, 2));
-            a.download = `Backup_${getTodayYMD()}.json`; document.body.appendChild(a); a.click(); a.remove();
+        // TOAST NOTIFICATION HELPER
+        function parseCSVLine(line) {
+            const result = [];
+            let current = '';
+            let inQuotes = false;
+            for (let i = 0; i < line.length; i++) {
+                const char = line[i];
+                if (inQuotes) {
+                    if (char === '"' && line[i + 1] === '"') {
+                        current += '"';
+                        i++;
+                    } else if (char === '"') {
+                        inQuotes = false;
+                    } else {
+                        current += char;
+                    }
+                } else {
+                    if (char === '"') {
+                        inQuotes = true;
+                    } else if (char === ',') {
+                        result.push(current);
+                        current = '';
+                    } else {
+                        current += char;
+                    }
+                }
+            }
+            result.push(current);
+            return result;
         }
+
+        function parseCSVBackup(rawText) {
+            const lines = rawText.split(/\r?\n/).filter(l => l.trim().length > 0);
+            if (lines.length < 2) return null;
+
+            const headerCols = parseCSVLine(lines[0]).map(h => h.trim().toLowerCase());
+            const hasIdCol = headerCols[0] === 'id';
+            const transactions = [];
+
+            for (let i = 1; i < lines.length; i++) {
+                const cols = parseCSVLine(lines[i]);
+                if (cols.length < 6) continue;
+
+                const offset = hasIdCol ? 1 : 0;
+                const id = hasIdCol && cols[0] ? String(cols[0]).trim() : `${Date.now()}_${i}`;
+                const date = String(cols[offset] || getTodayYMD()).trim();
+                const time = String(cols[offset + 1] || '00:00').trim();
+                const title = String(cols[offset + 2] || 'Transaksi').trim();
+                const rawType = String(cols[offset + 3] || '').trim().toUpperCase();
+                const type = (rawType === 'INCOME' || rawType === 'PEMASUKAN') ? 'INCOME' : 'EXPENSE';
+                const category = String(cols[offset + 4] || 'Lainnya').trim();
+                const amount = Number(String(cols[offset + 5] || '0').replace(/[^\d.-]/g, '')) || 0;
+                const notes = String(cols[offset + 6] || '').trim();
+
+                transactions.push({ id, title, amount, type, category, date, time, notes });
+            }
+
+            return transactions;
+        }
+
         function importJSONBackup(e) {
-            const f = e.target.files[0]; if (!f) return; const r = new FileReader();
-            r.onload = ev => { try { const d = JSON.parse(ev.target.result); if (d.transactions) { appState = d; saveToLocalStorage(); renderDashboard(); alert('Dipulihkan!'); } } catch { alert('Format error'); } };
-            r.readAsText(f);
+            const input = e.target;
+            const file = input.files && input.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(ev) {
+                try {
+                    const rawText = (ev.target.result || '').replace(/^\uFEFF/, '').trim();
+                    if (!rawText) {
+                        showToast('Berkas kosong dan tidak dapat dipulihkan.', 'error');
+                        return;
+                    }
+
+                    // Deteksi otomatis apakah berkas berformat JSON atau CSV
+                    if (rawText.startsWith('{') || rawText.startsWith('[')) {
+                        const parsed = JSON.parse(rawText);
+                        const source = (parsed && parsed.data && Array.isArray(parsed.data.transactions))
+                            ? parsed.data
+                            : parsed;
+
+                        if (source && Array.isArray(source.transactions)) {
+                            appState.transactions = source.transactions.map((t, idx) => ({
+                                id: t.id ? String(t.id) : `${Date.now()}_${idx}`,
+                                title: String(t.title || 'Transaksi'),
+                                amount: Number(t.amount) || 0,
+                                type: t.type === 'INCOME' ? 'INCOME' : 'EXPENSE',
+                                category: String(t.category || 'Lainnya'),
+                                date: String(t.date || getTodayYMD()),
+                                time: String(t.time || '00:00'),
+                                notes: String(t.notes || '')
+                            }));
+
+                            if (source.dailyBudget !== undefined && !isNaN(Number(source.dailyBudget))) {
+                                appState.dailyBudget = Number(source.dailyBudget);
+                            }
+
+                            if (Array.isArray(source.savingsGoals)) {
+                                appState.savingsGoals = source.savingsGoals.map((g, idx) => ({
+                                    id: g.id ? String(g.id) : `${Date.now()}_goal_${idx}`,
+                                    title: String(g.title || 'Target Tabungan'),
+                                    target: Number(g.target) || 0,
+                                    current: Number(g.current) || 0,
+                                    date: String(g.date || '')
+                                }));
+                            }
+
+                            if (source.theme === 'dark' || source.theme === 'light') {
+                                appState.theme = source.theme;
+                                initTheme();
+                            }
+                        } else if (Array.isArray(parsed)) {
+                            appState.transactions = parsed;
+                        } else {
+                            showToast('Struktur file JSON tidak dikenali.', 'error');
+                            return;
+                        }
+                    } else if (/^(ID,)?Tanggal,Waktu/i.test(rawText)) {
+                        // Pemulihan dari berkas ekspor CSV MoneyTrack
+                        const csvTransactions = parseCSVBackup(rawText);
+                        if (!csvTransactions || csvTransactions.length === 0) {
+                            showToast('Tidak ada data transaksi valid di dalam berkas CSV.', 'error');
+                            return;
+                        }
+                        appState.transactions = csvTransactions;
+                    } else {
+                        showToast('Format berkas tidak valid. Gunakan file .json atau .csv dari MoneyTrack.', 'error');
+                        return;
+                    }
+
+                    appState.calendarDate = new Date();
+                    saveToLocalStorage();
+                    renderDashboard();
+                    renderTransactionsTable();
+                    renderSavingsGoals();
+                    renderBudgetPage();
+                    showToast(`Berhasil memulihkan ${appState.transactions.length} transaksi!`);
+                } catch (err) {
+                    showToast('Gagal memproses berkas cadangan. Pastikan isi file tidak rusak.', 'error');
+                } finally {
+                    input.value = '';
+                }
+            };
+
+            reader.onerror = function() {
+                showToast('Gagal membuka berkas dari perangkat.', 'error');
+                input.value = '';
+            };
+
+            reader.readAsText(file);
         }
+
         function confirmResetAllData() {
             document.getElementById('confirm-modal-title').innerText = 'Hapus Seluruh Data';
             document.getElementById('confirm-modal-text').innerText = 'APAKAH ANDA YAKIN? Seluruh riwayat transaksi akan dihapus.';
